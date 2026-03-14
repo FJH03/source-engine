@@ -10,5 +10,5 @@ tar -xJf clang+llvm-11.1.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz --strip-componen
 chmod +x waf
 chmod +x $HOME/llvm11/bin/llvm-strip
 export PATH=$HOME/llvm11/bin:$PATH
-CFLAGS="-O2" CXXFLAGS="-O2" LDFLAGS="-s -flto" ./waf configure -T release --build-games=cstrike --togles --android=armeabi-v7a-hard,4.9,21 --prefix=./output --disable-warns &&
+CFLAGS="-O2" CXXFLAGS="-O2" LDFLAGS="-s -flto" ./waf configure -T release --build-games=cstrike --togles --android=aarch64,host,21 --prefix=./output --disable-warns &&
 ./waf install
