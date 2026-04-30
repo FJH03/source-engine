@@ -2368,7 +2368,9 @@ void CMapFile::MergeEntities( entity_t *pInstanceEntity, CMapFile *Instance, Vec
 		entities[ num_entities + i ] = Instance->entities[ i ];
 
 		entity_t *entity = &entities[ num_entities + i ];
-		entity->firstbrush += ( nummapbrushes - Instance->nummapbrushes );
+		{
+			entity->firstbrush += ( nummapbrushes - Instance->nummapbrushes );
+		}
 
 		char *pID = ValueForKey( entity, "hammerid" );
 		if ( pID[ 0 ] )
@@ -2403,21 +2405,21 @@ void CMapFile::MergeEntities( entity_t *pInstanceEntity, CMapFile *Instance, Vec
 			GDclass *EntClass = GD.BeginInstanceRemap( pEntity, NameFixup, InstanceOrigin, InstanceAngle );
 			if ( EntClass )
 			{
-				for( int i = 0; i < EntClass->GetVariableCount(); i++ )
+				for( int j = 0; j < EntClass->GetVariableCount(); j++ )
 				{
-					GDinputvariable *EntVar = EntClass->GetVariableAt( i );
+					GDinputvariable *EntVar = EntClass->GetVariableAt( j );
 					char *pValue = ValueForKey( entity, ( char * )EntVar->GetName() );
 					if ( GD.RemapKeyValue( EntVar->GetName(), pValue, temp, FixupStyle ) )
 					{
 #ifdef MERGE_INSTANCE_DEBUG_INFO
-						Msg( "   %d. Remapped %s: from %s to %s\n", i, EntVar->GetName(), pValue, temp );
+						Msg( "   %d. Remapped %s: from %s to %s\n", j, EntVar->GetName(), pValue, temp );
 #endif // #ifdef MERGE_INSTANCE_DEBUG_INFO
 						SetKeyValue( entity, EntVar->GetName(), temp );
 					}
 					else
 					{
 #ifdef MERGE_INSTANCE_DEBUG_INFO
-						Msg( "   %d. Ignored %s: %s\n", i, EntVar->GetName(), pValue );
+						Msg( "   %d. Ignored %s: %s\n", j, EntVar->GetName(), pValue );
 #endif // #ifdef MERGE_INSTANCE_DEBUG_INFO
 					}
 				}
@@ -2470,7 +2472,13 @@ void CMapFile::MergeEntities( entity_t *pInstanceEntity, CMapFile *Instance, Vec
 
 		oldValue = Connection->m_Pair->value;
 		strcpy( origValue, oldValue );
-		char *pos = strchr( origValue, ',' );
+		char chDelim = VMF_IOPARAM_STRING_DELIMITER;
+		if (!strchr(origValue, VMF_IOPARAM_STRING_DELIMITER))
+		{
+			chDelim = ',';
+		}
+
+		char *pos = strchr( origValue, chDelim );
 		if ( pos )
 		{	// null terminate the first field
 			*pos = NULL;
@@ -2483,7 +2491,10 @@ void CMapFile::MergeEntities( entity_t *pInstanceEntity, CMapFile *Instance, Vec
 			strcpy( newValue, temp );
 			if ( pos )
 			{
-				strcat( newValue, "," );
+				char szDelim[ 2 ];
+				sprintf( szDelim, "%c", VMF_IOPARAM_STRING_DELIMITER );
+
+				strcat( newValue, szDelim );
 				strcat( newValue, pos + 1 );
 			}
 

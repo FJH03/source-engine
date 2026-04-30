@@ -16,5 +16,7 @@
 
 #define MAX_IO_NAME_LEN				256
 
+#define VMF_IOPARAM_STRING_DELIMITER     0x1b
+
 
 #endif // ENTITYDEFS_H
